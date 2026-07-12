@@ -1,0 +1,15 @@
+{
+  "name": "blackbook-relay",
+  "version": "3.0.0",
+  "description": "BlackBook relay server",
+  "main": "relay.js",
+  "scripts": {
+    "start": "node relay.js",
+    "dev": "nodemon relay.js"
+  },
+  "dependencies": {
+    "express": "^4.19.0",
+    "cors": "^2.8.5",
+    "node-fetch": "^2.7.0"
+  }
+}
