@@ -1,27 +1,20 @@
-// BlackBook Relay Server v3.0
-// Hides OpenAI traffic behind your own domain.
-// Host on any free platform: Vercel, Railway, Render, Glitch, Fly.io, etc.
+// BlackBook Relay Server v3.1
+// Uses native fetch (Node 18+) — no node-fetch dependency needed.
 
 const express = require("express");
 const cors = require("cors");
-const fetch = require("node-fetch");
 
 const app = express();
 app.use(cors());
 app.use(express.json({ limit: "10mb" }));
 
 // ── Config ────────────────────────────────────────────────────────────────────
-// Set your OpenAI API key as environment variable: OPENAI_API_KEY
-// Or hardcode below (not recommended for production)
 const OPENAI_KEY = process.env.OPENAI_API_KEY || "";
-
-// Optional: simple auth token to prevent abuse
-// Set AUTH_TOKEN env var, or leave empty for no auth
 const AUTH_TOKEN = process.env.AUTH_TOKEN || "";
 
 // ── Routes ────────────────────────────────────────────────────────────────────
 app.get("/", (req, res) => {
-  res.json({ status: "BlackBook Relay Online", version: "3.0.0" });
+  res.json({ status: "BlackBook Relay Online", version: "3.1.0" });
 });
 
 app.post("/solve", async (req, res) => {
@@ -35,7 +28,7 @@ app.post("/solve", async (req, res) => {
     return res.status(400).json({ error: "No image provided" });
   }
   if (!OPENAI_KEY) {
-    return res.status(500).json({ error: "Server not configured with API key" });
+    return res.status(500).json({ error: "Server not configured with OPENAI_API_KEY" });
   }
 
   const systemPrompt = `You are BlackBook, a silent academic assistant analyzing a screenshot.
@@ -82,9 +75,10 @@ Response rules:
     });
 
     if (!openaiRes.ok) {
-      const err = await openaiRes.json().catch(() => ({}));
+      const errData = await openaiRes.json().catch(() => ({}));
+      console.error("OpenAI error:", openaiRes.status, errData);
       return res.status(openaiRes.status).json({
-        error: err?.error?.message || `OpenAI error ${openaiRes.status}`,
+        error: errData?.error?.message || `OpenAI error ${openaiRes.status}`,
       });
     }
 
@@ -94,6 +88,7 @@ Response rules:
     res.json({ answer });
 
   } catch (err) {
+    console.error("Server error:", err.message);
     res.status(500).json({ error: err.message });
   }
 });
@@ -104,5 +99,4 @@ app.listen(PORT, () => {
   console.log(`BlackBook Relay running on port ${PORT}`);
 });
 
-// For Vercel serverless export
 module.exports = app;

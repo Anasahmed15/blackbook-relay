@@ -1,6 +1,6 @@
 {
   "name": "blackbook-relay",
-  "version": "3.0.0",
+  "version": "3.1.0",
   "description": "BlackBook relay server",
   "main": "relay.js",
   "scripts": {
@@ -9,7 +9,6 @@
   },
   "dependencies": {
     "express": "^4.19.0",
-    "cors": "^2.8.5",
-    "node-fetch": "^2.7.0"
+    "cors": "^2.8.5"
   }
 }
