@@ -53,8 +53,8 @@ Response rules:
       },
       body: JSON.stringify({
         model: model || "gpt-5-mini",
-        max_tokens: 600,
-        temperature: 0.1,
+        max_completion_tokens: 600,
+        temperature: 1,
         messages: [
           { role: "system", content: systemPrompt },
           {
